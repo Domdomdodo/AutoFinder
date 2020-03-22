@@ -20,6 +20,11 @@ public class CarSearchTask implements Runnable {
     @Override
     public void run() {
         try {
+
+            mainWindowController.setResults(0,0);
+
+            int found = 0;
+            int notFound = 0;
             searching = true;
             CarSearcher searcher = new CarSearcher();
             int totalCars = 0;
@@ -41,11 +46,14 @@ public class CarSearchTask implements Runnable {
 
                 if (elements.size() > 0) {
                     carViewWrapper.setFound(true);
+                    found++;
                 } else {
                     carViewWrapper.setFound(false);
+                    notFound++;
                 }
 
                 searched++;
+                mainWindowController.setResults(found, notFound);
                 mainWindowController.updateProgress(((double)searched / (double)totalCars));
             }
         }

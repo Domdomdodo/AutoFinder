@@ -58,10 +58,28 @@
       <Text layoutX="230.0" layoutY="240.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Selected:" />
       <Text id="selected-count" layoutX="304.0" layoutY="240.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" wrappingWidth="42.92724609375" />
       <Button id="search-cars-button" layoutX="236.0" layoutY="294.0" mnemonicParsing="false" text="Search for cars" />
-      <ProgressIndicator id="search-progress" layoutX="239.0" layoutY="377.0" progress="0.0" />
-      <TextField id="search-interval" layoutX="353.0" layoutY="331.0" prefHeight="25.0" prefWidth="96.0" text="10" />
-      <Text layoutX="242.0" layoutY="353.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Search interval:" />
+      <ProgressIndicator id="search-progress" layoutX="365.0" layoutY="284.0" progress="0.0" />
+      <TextField id="search-interval" layoutX="353.0" layoutY="347.0" prefHeight="25.0" prefWidth="96.0" text="10" />
+      <Text layoutX="239.0" layoutY="368.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Search interval:" />
       <Button id="open-search-button" layoutX="469.0" layoutY="260.0" mnemonicParsing="false" text="Open search page" />
+      <Pane layoutX="239.0" layoutY="386.0" prefHeight="120.0" prefWidth="200.0" style="-fx-background-color: powderblue;">
+         <children>
+            <Text layoutX="14.0" layoutY="30.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Search result:" />
+            <VBox layoutX="14.0" layoutY="40.0">
+               <children>
+                  <Text layoutX="14.0" layoutY="55.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Found:" />
+                  <Text layoutX="14.0" layoutY="76.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Not found:" />
+               </children>
+            </VBox>
+            <Line endX="140.0" layoutX="37.0" layoutY="39.0" startX="-20.0" />
+            <VBox layoutX="102.0" layoutY="37.8134765625">
+               <children>
+                  <Text id="result-found" layoutX="102.0" layoutY="54.0" strokeType="OUTSIDE" strokeWidth="0.0" text="found" />
+                  <Text id="result-not-found" layoutX="108.0" layoutY="75.0" strokeType="OUTSIDE" strokeWidth="0.0" text="not" />
+               </children>
+            </VBox>
+         </children>
+      </Pane>
    </children>
    <effect>
       <DropShadow color="#2718ee" height="98.09" radius="54.475" width="121.81" />

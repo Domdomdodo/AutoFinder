@@ -16,7 +16,6 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -29,8 +28,6 @@ import java.net.URL;
 import java.text.NumberFormat;
 import java.util.HashSet;
 import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.function.UnaryOperator;
 
 public class MainWindowController {
@@ -38,6 +35,8 @@ public class MainWindowController {
     private Parent mainWindow = null;
     private TextField selectedFileText;
     private Button selectFileButton;
+    private int found = 0;
+    private int notFound = 0;
     private VBox scrollVBox;
     private ScrollPane scrollPane;
     private ProgressIndicator progressIndicator;
@@ -121,7 +120,7 @@ public class MainWindowController {
                         Platform.runLater(new Runnable() {
                             @Override
                             public void run() {
-                                checkSearchButton();
+                                doUpdates();
                             }
                         });
                     }
@@ -288,7 +287,17 @@ public class MainWindowController {
         return Integer.parseInt(delay.getText());
     }
 
-    public synchronized void checkSearchButton(){
+    public synchronized void doUpdates(){
+        for (CarViewWrapper carViewWrapper: carViewWrappers){
+            carViewWrapper.updateBackGround();
+        }
+
+        Text foundText = (Text) stage.getScene().lookup("#result-found");
+        Text notFoundText = (Text) stage.getScene().lookup("#result-not-found");
+
+        foundText.setText(String.valueOf(found));
+        notFoundText.setText(String.valueOf(notFound));
+
         if (searchTask != null){
             if (searchTask.searching){
                 Button startSearchButton = (Button) stage.getScene().lookup("#search-cars-button");
@@ -300,5 +309,10 @@ public class MainWindowController {
         Button startSearchButton = (Button) stage.getScene().lookup("#search-cars-button");
         startSearchButton.setDisable(false);
         startSearchButton.setText("Search for cars");
+    }
+
+    public synchronized void setResults(int found, int notFound){
+        this.found = found;
+        this.notFound = notFound;
     }
 }
