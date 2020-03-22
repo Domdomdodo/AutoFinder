@@ -27,7 +27,7 @@ public class CarSearcher {
         return candidates;
     }
 
-    private static String buildSearchUrl(Car car){
+    public static String buildSearchUrl(Car car){
 
         String searchUrl = BASE_URL;
 

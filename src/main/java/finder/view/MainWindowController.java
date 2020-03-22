@@ -4,12 +4,16 @@ import finder.Car;
 import finder.CarReader;
 import finder.CarSearchTask;
 import finder.controller.FileSelectionController;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -18,6 +22,10 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.awt.*;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.text.NumberFormat;
 import java.util.HashSet;
 import java.util.Locale;
@@ -41,7 +49,7 @@ public class MainWindowController {
     public MainWindowController(Stage stage){
         try {
             this.stage = stage;
-            mainWindow = FXMLLoader.load(getClass().getClassLoader().getResource("window.fxml"));
+            mainWindow = FXMLLoader.load(getClass().getResource("/window.fxml"));
         }
         catch (Exception e){
             System.out.println(e.getMessage());
@@ -104,6 +112,26 @@ public class MainWindowController {
             }
         });
 
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        Thread.sleep(10);
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                checkSearchButton();
+                            }
+                        });
+                    }
+                    catch(Exception e){
+
+                    }
+                }
+            }
+        }).start();
+
 
         UnaryOperator<TextFormatter.Change> integerFilter = change -> {
             String input = change.getText();
@@ -116,13 +144,6 @@ public class MainWindowController {
         TextField searchInterval = (TextField) scene.lookup("#search-interval");
         searchInterval.setTextFormatter(new TextFormatter<String>(integerFilter));
 
-        Timer timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                checkSearchButton();
-            }
-        }, 0, 10);
 
         updateSelection();
     }
@@ -173,6 +194,8 @@ public class MainWindowController {
             if (carViewWrapper.selected) {
                 selectedWrappers.add(carViewWrapper);
             }
+            Text selectedCount = (Text) getMainWindow().lookup("#selected-count");
+            selectedCount.setText(String.valueOf(selectedWrappers.size()));
         }
 
         Text name = (Text) stage.getScene().lookup("#selected-name");
@@ -184,12 +207,15 @@ public class MainWindowController {
         Text fuel = (Text) stage.getScene().lookup("#selected-fuel");
         Text doors = (Text) stage.getScene().lookup("#selected-doors");
 
+        Button searchLink = (Button)stage.getScene().lookup("#open-search-button");
+
         if (selectedWrappers.size() == 1){
 
             NumberFormat currencyFormatter =
                     NumberFormat.getCurrencyInstance(new Locale("EN", "NL"));
 
-            Car selectedCar = selectedWrappers.iterator().next().car;
+            CarViewWrapper selectedWrapper  = selectedWrappers.iterator().next();
+            Car selectedCar = selectedWrapper.car;
             name.setText(CarViewWrapper.formatString(selectedCar.getBrand() + " " + selectedCar.getModel(), 20));
             plate.setText(selectedCar.getLicensePlate());
             brand.setText(selectedCar.getBrand());
@@ -198,7 +224,30 @@ public class MainWindowController {
             fuel.setText(selectedCar.getFuelType().toString());
             doors.setText(String.valueOf(selectedCar.getDoors()));
 
+
+
+
+            if (selectedWrapper.searchUrl != "") {
+                searchLink.setOnAction(new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(ActionEvent event) {
+                        try {
+                            Desktop.getDesktop().browse(new URL(selectedWrapper.searchUrl).toURI());
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (URISyntaxException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+                searchLink.setDisable(false);
+            } else {
+                searchLink.setDisable(true);
+            }
+
         } else {
+
+            searchLink.setDisable(true);
 
             name.setText("Please select a single car");
 
@@ -229,8 +278,9 @@ public class MainWindowController {
         }
     }
 
-    public synchronized void updateProgress(int progress){
+    public synchronized void updateProgress(double progress){
         progressIndicator.setProgress(progress);
+        progressIndicator.progressProperty().setValue(progress);
     }
 
     public synchronized int getSearchDelay(){
@@ -238,15 +288,17 @@ public class MainWindowController {
         return Integer.parseInt(delay.getText());
     }
 
-    public void checkSearchButton(){
+    public synchronized void checkSearchButton(){
         if (searchTask != null){
             if (searchTask.searching){
                 Button startSearchButton = (Button) stage.getScene().lookup("#search-cars-button");
                 startSearchButton.setDisable(true);
+                startSearchButton.setText("Searching...");
                 return;
             }
         }
         Button startSearchButton = (Button) stage.getScene().lookup("#search-cars-button");
         startSearchButton.setDisable(false);
+        startSearchButton.setText("Search for cars");
     }
 }

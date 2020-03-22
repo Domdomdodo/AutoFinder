@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
 Implementation-Title: Auto Finder
-Implementation-Version: 1.0-SNAPSHOT
+Implementation-Version: 0.1
 Main-Class: finder.main
 

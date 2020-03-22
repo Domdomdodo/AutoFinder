@@ -1,5 +1,6 @@
 package finder;
 
+import finder.controller.FileSelectionController;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -14,8 +15,6 @@ import java.util.Iterator;
 
 public class CarReader {
 
-    public static final String CAR_FILE_LOCATION = "src/files/cars.xlsx";
-
     public CarReader(){
 
     }
@@ -24,9 +23,7 @@ public class CarReader {
         HashSet<Car> cars = new HashSet<>();
 
         try {
-            File file = new File(CAR_FILE_LOCATION);
-
-            FileInputStream stream = new FileInputStream(file);
+            FileInputStream stream = new FileInputStream(FileSelectionController.SELECTED_FILE);
             XSSFWorkbook wb = new XSSFWorkbook(stream);
             XSSFSheet sheet = wb.getSheetAt(0);
             Iterator<Row> rowIterator = sheet.iterator();

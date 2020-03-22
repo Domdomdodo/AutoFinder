@@ -35,7 +35,8 @@ public class CarViewWrapper {
     private Text model;
     public boolean selected = false;
     public boolean found = false;
-    public String url = "";
+    public String searchUrl = "";
+    public String foundUrl = "";
 
     public CarViewWrapper(Car car){
         this.car = car;

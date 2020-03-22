@@ -22,7 +22,13 @@ public class CarSearchTask implements Runnable {
         try {
             searching = true;
             CarSearcher searcher = new CarSearcher();
-            int totalCars = carViewWrappers.size();
+            int totalCars = 0;
+            for (CarViewWrapper carViewWrapper : carViewWrappers){
+                if (carViewWrapper.selected){
+                    totalCars++;
+                }
+            }
+
             int searched = 0;
             for (CarViewWrapper carViewWrapper : carViewWrappers) {
                 if (!carViewWrapper.selected) {
@@ -31,15 +37,16 @@ public class CarSearchTask implements Runnable {
                 Thread.sleep(mainWindowController.getSearchDelay() * 1000);
                 Elements elements = searcher.search(carViewWrapper.car);
 
+                carViewWrapper.searchUrl = searcher.buildSearchUrl(carViewWrapper.car);
+
                 if (elements.size() > 0) {
                     carViewWrapper.setFound(true);
-                    carViewWrapper.url = "test";
                 } else {
                     carViewWrapper.setFound(false);
                 }
 
                 searched++;
-                mainWindowController.updateProgress(searched / totalCars);
+                mainWindowController.updateProgress(((double)searched / (double)totalCars));
             }
         }
         catch (InterruptedException e){
